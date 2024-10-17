@@ -1,35 +1,47 @@
+import { Planck, Quark } from "./classes.js";
+
+//--------------------------------------------------- DO NOT TOUCH
+
 let uniPoints = 0;
 let uniPointsElement;
 
 let updateRatePerSecond = 30;
 let updateRate = 1 / updateRatePerSecond * 1000;
 
-class Planck {
-    constructor(price, pricemul) {
-        this.price = price;
-        this.pricemul = pricemul;
-    }
-}
+let planck = new Planck(0, 1.1);
+let quark = new Quark(100, 1.2);
+
+//--------------------------------------------------- BUYERS
 
 function buyPlanck() {
-    planckAmount++;
+    uniPoints -= planck.inc(uniPoints, 1);
 
-    if (planckPrice < 2) {
-        planckPrice++;
-    } else {
-        planckPrice = Math.pow(planckPrice, priceMul);
-        planckPrice = Math.ceil(planckPrice);
-    }
+    updateHtml();
+} document.getElementById("buyPlanckButton").addEventListener("click", buyPlanck);
 
-    document.getElementById("buyPlanckButton").innerHTML = "Buy a planck (" + planckAmount + ") -> " + planckPrice;
+function buyQuark() {
+    uniPoints -= quark.inc(uniPoints, 1);
+
+    updateHtml();
+} document.getElementById("buyQuarkButton").addEventListener("click", buyQuark);
+
+//--------------------------------------------------- UPDATER
+
+function updateHtml() {
+    uniPointsElement.innerHTML = Math.floor(uniPoints);
+    document.getElementById("buyPlanckButton").innerHTML = "Buy a planck (" + Math.floor(planck.amount) + ") -> " + Math.floor(planck.price);
+    document.getElementById("buyQuarkButton").innerHTML = "Buy a quark (" + Math.floor(quark.amount) + ") -> " + Math.floor(quark.price);
 }
 
-function updateUniPoints() {
+//--------------------------------------------------- MAIN LOOP
+
+function update() {
     if (uniPointsElement == null) {
         uniPointsElement = document.getElementById("uniPoints");
     }
 
-    uniPoints += planckAmount / updateRatePerSecond;
+    planck.inc(null, quark.amount / updateRatePerSecond);
+    uniPoints += planck.earned() / updateRatePerSecond;
 
-    uniPointsElement.innerHTML = Math.floor(uniPoints);
-} this.setInterval(updateUniPoints, updateRate);
+    updateHtml();
+} setInterval(update, updateRate);
