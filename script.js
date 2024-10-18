@@ -8,6 +8,8 @@ let uniPointsElement;
 let updateRatePerSecond = 30;
 let updateRate = 1 / updateRatePerSecond * 1000;
 
+let now, before = new Date();
+
 let planck = new Planck(0, 1.1);
 let quark = new Quark(100, 1.2);
 
@@ -40,8 +42,21 @@ function update() {
         uniPointsElement = document.getElementById("uniPoints");
     }
 
-    planck.inc(null, quark.amount / updateRatePerSecond);
-    uniPoints += planck.earned() / updateRatePerSecond;
+    now = Date.now();
+    let elapsed = now - before;
+    let elapsedSeconds = elapsed / 1000;
+
+    if (elapsed > 100) {
+        console.log(elapsedSeconds);
+        
+        planck.inc(null, quark.amount * elapsedSeconds);
+        uniPoints += planck.earned() * elapsedSeconds;
+    } else {
+        planck.inc(null, quark.amount / updateRatePerSecond);
+        uniPoints += planck.earned() / updateRatePerSecond;
+    }
 
     updateHtml();
+
+    before = Date.now();
 } setInterval(update, updateRate);
