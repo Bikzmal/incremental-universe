@@ -12,6 +12,16 @@ let now, before = new Date();
 
 let planck = new Planck(0, 1.1);
 let quark = new Quark(100, 1.2);
+/*
+Electron
+Neutrino
+Photon
+Proton
+Neutron
+Atom
+Molecule
+Virus
+*/
 
 //--------------------------------------------------- BUYERS
 
