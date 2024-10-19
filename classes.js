@@ -5,6 +5,7 @@ export class Upgrader {
         this.priceMul = priceMul;
         this.amount = 0;
         this.startPrice = price;
+        this.buyMul = 1;
     }
 
     inc(unipoints, amt) {
@@ -15,6 +16,7 @@ export class Upgrader {
         const currentPrice = this.price;
 
         if (!creativeSource) {
+            this.buyMul *= 1.1;
             this.price = this.price < 2 ? this.price + 1 : Math.ceil(this.price * this.priceMul);
         }
 
@@ -22,7 +24,7 @@ export class Upgrader {
     }
 
     earned() {
-        return this.amount;
+        return this.amount * this.buyMul;
     }
 
     reset() {

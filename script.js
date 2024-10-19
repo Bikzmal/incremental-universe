@@ -71,15 +71,15 @@ function update() {
     const elapsedSeconds = elapsed / 1000;
 
     // Increment upgrades over time
-    upgrades.planck.inc(null, upgrades.quark.amount * elapsedSeconds);
-    upgrades.quark.inc(null, upgrades.electron.amount * elapsedSeconds);
-    upgrades.electron.inc(null, upgrades.neutrino.amount * elapsedSeconds);
-    upgrades.neutrino.inc(null, upgrades.photon.amount * elapsedSeconds);
-    upgrades.photon.inc(null, upgrades.proton.amount * elapsedSeconds);
-    upgrades.proton.inc(null, upgrades.neutron.amount * elapsedSeconds);
-    upgrades.neutron.inc(null, upgrades.atom.amount * elapsedSeconds);
-    upgrades.atom.inc(null, upgrades.molecule.amount * elapsedSeconds);
-    upgrades.molecule.inc(null, upgrades.virus.amount * elapsedSeconds);
+    upgrades.planck.inc(null, upgrades.quark.earned() * elapsedSeconds);
+    upgrades.quark.inc(null, upgrades.electron.earned() * elapsedSeconds);
+    upgrades.electron.inc(null, upgrades.neutrino.earned() * elapsedSeconds);
+    upgrades.neutrino.inc(null, upgrades.photon.earned() * elapsedSeconds);
+    upgrades.photon.inc(null, upgrades.proton.earned() * elapsedSeconds);
+    upgrades.proton.inc(null, upgrades.neutron.earned() * elapsedSeconds);
+    upgrades.neutron.inc(null, upgrades.atom.earned() * elapsedSeconds);
+    upgrades.atom.inc(null, upgrades.molecule.earned() * elapsedSeconds);
+    upgrades.molecule.inc(null, upgrades.virus.earned() * elapsedSeconds);
 
     uniPoints += upgrades.planck.earned() * elapsedSeconds;
 
