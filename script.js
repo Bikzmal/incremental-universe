@@ -1,48 +1,62 @@
-import { Planck, Quark } from "./classes.js";
+import { Upgrader } from "./classes.js";
 
-//--------------------------------------------------- DO NOT TOUCH
+//--------------------------------------------------- INITIAL SETUP
 
-let uniPoints = 0;
+let uniPoints = 1;
 let uniPointsElement;
+const updateRatePerSecond = 30;
+const updateRate = (1 / updateRatePerSecond) * 1000;
 
-let updateRatePerSecond = 30;
-let updateRate = 1 / updateRatePerSecond * 1000;
+let now, before = Date.now();
 
-let now, before = new Date();
+// List of all upgrades
+const upgrades = {
+    planck: new Upgrader('Planck', Math.pow(10, 0)),
+    quark: new Upgrader('Quark', Math.pow(10, 2)),
+    electron: new Upgrader('Electron', Math.pow(10, 4)),
+    neutrino: new Upgrader('Neutrino', Math.pow(10, 6)),
+    photon: new Upgrader('Photon', Math.pow(10, 8)),
+    proton: new Upgrader('Proton', Math.pow(10, 10)),
+    neutron: new Upgrader('Neutron', Math.pow(10, 12)),
+    atom: new Upgrader('Atom', Math.pow(10, 14)),
+    molecule: new Upgrader('Molecule', Math.pow(10, 16)),
+    virus: new Upgrader('Virus', Math.pow(10, 18)),
+};
 
-let planck = new Planck(0, 1.1);
-let quark = new Quark(100, 1.2);
-/*
-Electron
-Neutrino
-Photon
-Proton
-Neutron
-Atom
-Molecule
-Virus
-*/
+// Get button elements
+const buttons = {
+    planck: document.getElementById("buyPlanckButton"),
+    quark: document.getElementById("buyQuarkButton"),
+    electron: document.getElementById("buyElectronButton"),
+    neutrino: document.getElementById("buyNeutrinoButton"),
+    photon: document.getElementById("buyPhotonButton"),
+    proton: document.getElementById("buyProtonButton"),
+    neutron: document.getElementById("buyNeutronButton"),
+    atom: document.getElementById("buyAtomButton"),
+    molecule: document.getElementById("buyMoleculeButton"),
+    virus: document.getElementById("buyVirusButton"),
+};
 
-//--------------------------------------------------- BUYERS
+//--------------------------------------------------- EVENT LISTENERS
 
-function buyPlanck() {
-    uniPoints -= planck.inc(uniPoints, 1);
+Object.keys(upgrades).forEach((upgradeKey) => {
+    buttons[upgradeKey].addEventListener('click', () => buy(upgrades[upgradeKey]));
+});
 
+//--------------------------------------------------- BUY FUNCTION
+
+function buy(upgrader) {
+    uniPoints -= upgrader.inc(uniPoints, 1);
     updateHtml();
-} document.getElementById("buyPlanckButton").addEventListener("click", buyPlanck);
+}
 
-function buyQuark() {
-    uniPoints -= quark.inc(uniPoints, 1);
-
-    updateHtml();
-} document.getElementById("buyQuarkButton").addEventListener("click", buyQuark);
-
-//--------------------------------------------------- UPDATER
+//--------------------------------------------------- UPDATE HTML
 
 function updateHtml() {
-    uniPointsElement.innerHTML = Math.floor(uniPoints);
-    document.getElementById("buyPlanckButton").innerHTML = "Buy a planck (" + Math.floor(planck.amount) + ") -> " + Math.floor(planck.price);
-    document.getElementById("buyQuarkButton").innerHTML = "Buy a quark (" + Math.floor(quark.amount) + ") -> " + Math.floor(quark.price);
+    uniPointsElement.innerHTML = Math.trunc(uniPoints).toLocaleString('en-US');
+    Object.keys(upgrades).forEach((upgradeKey) => {
+        buttons[upgradeKey].innerHTML = upgrades[upgradeKey].generateHtml();
+    });
 }
 
 //--------------------------------------------------- MAIN LOOP
@@ -53,20 +67,24 @@ function update() {
     }
 
     now = Date.now();
-    let elapsed = now - before;
-    let elapsedSeconds = elapsed / 1000;
+    const elapsed = now - before;
+    const elapsedSeconds = elapsed / 1000;
 
-    if (elapsed > 100) {
-        console.log(elapsedSeconds);
-        
-        planck.inc(null, quark.amount * elapsedSeconds);
-        uniPoints += planck.earned() * elapsedSeconds;
-    } else {
-        planck.inc(null, quark.amount / updateRatePerSecond);
-        uniPoints += planck.earned() / updateRatePerSecond;
-    }
+    // Increment upgrades over time
+    upgrades.planck.inc(null, upgrades.quark.amount * elapsedSeconds);
+    upgrades.quark.inc(null, upgrades.electron.amount * elapsedSeconds);
+    upgrades.electron.inc(null, upgrades.neutrino.amount * elapsedSeconds);
+    upgrades.neutrino.inc(null, upgrades.photon.amount * elapsedSeconds);
+    upgrades.photon.inc(null, upgrades.proton.amount * elapsedSeconds);
+    upgrades.proton.inc(null, upgrades.neutron.amount * elapsedSeconds);
+    upgrades.neutron.inc(null, upgrades.atom.amount * elapsedSeconds);
+    upgrades.atom.inc(null, upgrades.molecule.amount * elapsedSeconds);
+    upgrades.molecule.inc(null, upgrades.virus.amount * elapsedSeconds);
+
+    uniPoints += upgrades.planck.earned() * elapsedSeconds;
 
     updateHtml();
-
     before = Date.now();
-} setInterval(update, updateRate);
+}
+
+setInterval(update, updateRate);

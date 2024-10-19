@@ -1,29 +1,21 @@
-class Upgrader {
-    constructor(price=0, priceExp=1.3) {
+export class Upgrader {
+    constructor(name, price=0, priceMul=2.0) {
+        this.name = name;
         this.price = price;
-        this.priceExp = priceExp;
+        this.priceMul = priceMul;
         this.amount = 0;
-
         this.startPrice = price;
     }
 
     inc(unipoints, amt) {
-        let creativeSource = unipoints == null;
-        if (!creativeSource) {
-            if (unipoints < this.price) {
-                return 0;
-            }
-        }
+        const creativeSource = unipoints == null;
+        if (!creativeSource && unipoints < this.price) return 0;
+
         this.amount += amt;
-        let currentPrice = this.price;
+        const currentPrice = this.price;
 
         if (!creativeSource) {
-            if (this.price < 2) {
-                this.price++;
-            } else {
-                this.price = Math.pow(this.price, this.priceExp);
-                this.price = Math.ceil(this.price);
-            }
+            this.price = this.price < 2 ? this.price + 1 : Math.ceil(this.price * this.priceMul);
         }
 
         return currentPrice;
@@ -35,9 +27,10 @@ class Upgrader {
 
     reset() {
         this.price = this.startPrice;
+        this.amount = 0;
     }
+
+    generateHtml() {
+        return `${Math.trunc(this.amount).toLocaleString('en-US')} ${this.name}${this.name[this.name.length-1]=='s'?'es':'s'} | Buy a ${this.name} (Cost: ${Math.trunc(this.price).toLocaleString('en-US')})`;
+    }    
 }
-
-export class Planck extends Upgrader {}
-
-export class Quark extends Upgrader {}
