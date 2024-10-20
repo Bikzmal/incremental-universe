@@ -1,4 +1,4 @@
-import { Upgrader } from "./classes.js";
+import { Result, Upgrader } from "./classes.js";
 
 //--------------------------------------------------- INITIAL SETUP
 
@@ -10,6 +10,7 @@ const updateRate = (1 / updateRatePerSecond) * 1000;
 let now, before = Date.now();
 
 // List of all upgrades
+/** @type {Record<string, Upgrader>} */
 const upgrades = {
     planck: new Upgrader('Planck', Math.pow(10, 0)),
     quark: new Upgrader('Quark', Math.pow(10, 2)),
@@ -24,6 +25,7 @@ const upgrades = {
 };
 
 // Get button elements
+/** @type {Record<string, HTMLElement | null>} */
 const buttons = {
     planck: document.getElementById("buyPlanckButton"),
     quark: document.getElementById("buyQuarkButton"),
@@ -37,16 +39,29 @@ const buttons = {
     virus: document.getElementById("buyVirusButton"),
 };
 
-//--------------------------------------------------- EVENT LISTENERS
-
-Object.keys(upgrades).forEach((upgradeKey) => {
-    buttons[upgradeKey].addEventListener('click', () => buy(upgrades[upgradeKey]));
-});
-
 //--------------------------------------------------- BUY FUNCTION
 
 function buy(upgrader) {
-    uniPoints -= upgrader.inc(uniPoints, 1);
+    /** @type {Result} */
+    let result = upgrader.inc(uniPoints, 1);
+    if (!result.isSuccessful()) return;
+
+    uniPoints -= result.unwrap();
+
+    Object.keys(upgrades).forEach((key, index, array) => {
+        if (upgrades[key] !== upgrader) return;
+    
+        if (index + 1 < array.length) {
+            let nextKey = array[index + 1];
+
+            /** @type {HTMLButtonElement} */
+            let nextButton = buttons[nextKey];
+            
+            if (nextButton.style.opacity === '1') return;
+            nextButton.style.opacity = '1';
+        }
+    });
+
     updateHtml();
 }
 
@@ -85,6 +100,22 @@ function update() {
 
     updateHtml();
     before = Date.now();
-}
+} setInterval(update, updateRate);
 
-setInterval(update, updateRate);
+//--------------------------------------------------- INIT
+
+Object.keys(upgrades).forEach((key) => {
+    /** @type {HTMLElement} */
+    let button = buttons[key];
+
+    button.addEventListener('click', () => buy(upgrades[key]));
+});
+
+Object.keys(buttons).forEach((key) => {
+    /** @type {HTMLElement} */
+    let button = buttons[key];
+
+    if (button.id === "buyPlanckButton") return;
+
+    button.style.opacity = '0';
+});
