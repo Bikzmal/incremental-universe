@@ -1,4 +1,5 @@
-import { Result, Upgrader } from "./classes.js";
+import { Result } from "./classes/result.js";
+import { Upgrader } from "./classes/upgrader.js";
 
 //--------------------------------------------------- INITIAL SETUP
 

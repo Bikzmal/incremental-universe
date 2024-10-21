@@ -1,3 +1,5 @@
+import { Result } from "./result.js";
+
 export class Upgrader {
     constructor(name, price=0, priceMul=2.0) {
         this.name = name;
@@ -35,33 +37,4 @@ export class Upgrader {
     generateHtml() {
         return `${Math.trunc(this.amount).toLocaleString('en-US')} ${this.name}${this.name[this.name.length-1]=='s'?'es':'s'} | Buy a ${this.name} (Cost: ${Math.trunc(this.price).toLocaleString('en-US')})`;
     }    
-}
-
-// rust reference fr
-export class Result {
-    /** @type {boolean} */
-    success;
-    /** @type {any} */
-    returnValue;
-
-    /**
-     * @param {boolean} success
-     * @param {any} returnValue
-     */
-    constructor(success, returnValue) {
-        this.success = success
-        this.returnValue = returnValue;
-    }
-
-    isSuccessful() {
-        return this.success;
-    }
-
-    unwrap() {
-        if (this.success) {
-            return this.returnValue;
-        } else {
-            throw new Error("Unwrap Exception: No return value");
-        }
-    }
 }
